@@ -1,0 +1,312 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BookMyCinema</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root{
+          --brand-font: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+          --logo-font-size: 28px;
+          --logo-font-weight: 700;
+          --logo-line-height: 1;
+        }
+
+        header .logo {
+          font-family: var(--brand-font);
+          font-size: var(--logo-font-size);
+          font-weight: var(--logo-font-weight);
+          line-height: var(--logo-line-height);
+          color: #111;
+          display: inline-flex;
+          align-items: center;
+        }
+
+        header .logo svg,
+        header .logo svg path,
+        header .logo svg rect,
+        header .logo svg circle {
+            fill: currentColor !important;
+            stroke: currentColor !important;
+        }
+        header .logo svg circle {
+            fill: none !important;
+            stroke: currentColor !important;
+        }
+
+        header .logo span:first-child {
+          font-family: var(--brand-font);
+          font-weight: var(--logo-font-weight);
+          font-size: calc(var(--logo-font-size) + 2px);
+          line-height: var(--logo-line-height);
+        }
+    </style>
+</head>
+
+<body style="margin:0; padding:0; font-family: Arial, sans-serif;">
+
+    <!-- TOP NAVBAR ONLY -->
+    <header style="
+        width: 100%;
+        background: #fcfcfcff;
+        padding: 14px 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+        position: relative;
+    ">
+
+        <!-- Left: Logo -->
+        <div class="logo">
+            <span>B</span>
+
+            <svg width="65" height="50" viewBox="0 0 64 48" fill="none"
+                 xmlns="http://www.w3.org/2000/svg"
+                 style="margin-left: -4px; margin-right: -3px; margin-top: -10px;">
+                <path d="M16 20 L24 8 H40 L48 20 Z" transform="translate(0, -5)" />
+                <rect x="12" y="20" width="40" height="6" transform="translate(0, -5)" />
+                <circle cx="22" cy="32" r="7" stroke-width="4" fill="none" />
+                <circle cx="42" cy="32" r="7" stroke-width="4" fill="none" />
+                <path d="M31 32 H33" stroke-width="3" stroke-linecap="round" />
+            </svg>
+
+            <span>KmyCinema</span>
+        </div>
+
+        <!-- Right: location + coins + profile -->
+        <div style="display: flex; align-items: center; gap: 35px;">
+
+            <!-- your dropdown UI lives in this file -->
+            <div style="position: relative;">
+
+    <!-- Visible selected city -->
+    <div id="location-toggle"
+         onclick="toggleCityDropdown()"
+         onmouseover="this.style.background='#f0f0f0';"
+         onmouseout="this.style.background='transparent';"
+
+         style="
+            font-size: 16px;
+            font-weight: 700;
+            font-family: Arial, sans-serif;
+            color: #040404ff;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            padding: 6px 10px;
+            border-radius: 6px;
+
+         ">
+
+        <!-- Arrow (thin CSS arrow) -->
+        <span id="arrow-icon" style="
+            width: 6px;
+            height: 6px;
+            border-right: 2px solid #555;
+            border-bottom: 2px solid #555;
+            display: inline-block;
+            transform: rotate(315deg); /* Default: pointing towards Chennai */
+            transition: 0.2s ease;
+        "></span>
+
+        <!-- Current city -->
+        <span id="current-city">{{ city }}</span>
+    </div>
+
+
+    <!-- LOCATION DROPDOWN -->
+    <div id="city-dropdown"
+         style="
+            position: absolute;
+            top: 120%;
+            left: 0;
+            background: #ffffff;
+            border: 1px solid #d0d0d0;
+            border-radius: 8px;
+            padding: 6px 0;
+            min-width: 160px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            display: none;
+            z-index: 20;
+            font-size: 14px;
+         ">
+
+        <!-- Chennai -->
+        <div onclick="selectCity('Chennai')" 
+             style="padding: 6px 12px; cursor: pointer;  font-size: 16px "
+             onmouseover="this.style.background='#f0f0f0';"
+             onmouseout="this.style.background='white';">
+
+            <!-- Icon -->
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#040404ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 21s-6-5.686-6-10a6 6 0 1 1 12 0c0 4.314-6 10-6 10z"></path>
+                <circle cx="12" cy="11" r="3"></circle>
+            </svg>
+
+            Chennai
+        </div>
+
+
+        <!-- Dindigul -->
+        <div onclick="selectCity('Dindigul')" 
+             style="padding: 6px 12px; cursor: pointer;   font-size: 16px"
+             onmouseover="this.style.background='#f0f0f0';"
+             onmouseout="this.style.background='white';">
+
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#040404ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 21s-6-5.686-6-10a6 6 0 1 1 12 0c0 4.314-6 10-6 10z"></path>
+                <circle cx="12" cy="11" r="3"></circle>
+            </svg>
+
+            Dindigul
+        </div>
+
+
+        <!-- Coimbatore -->
+        <div onclick="selectCity('Coimbatore')" 
+             style="padding: 6px 12px; cursor: pointer;    font-size: 16px;"
+             onmouseover="this.style.background='#f0f0f0';"
+             onmouseout="this.style.background='white';">
+
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#040404ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 21s-6-5.686-6-10a6 6 0 1 1 12 0c0 4.314-6 10-6 10z"></path>
+                <circle cx="12" cy="11" r="3"></circle>
+            </svg>
+
+            Coimbatore
+        </div>
+
+
+        <!-- Tiruchi -->
+        <div onclick="selectCity('Tiruchi')" 
+             style="padding: 6px 12px; cursor: pointer;     font-size: 16px;"
+             onmouseover="this.style.background='#f0f0f0';"
+             onmouseout="this.style.background='white';">
+
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#040404ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 21s-6-5.686-6-10a6 6 0 1 1 12 0c0 4.314-6 10-6 10z"></path>
+                <circle cx="12" cy="11" r="3"></circle>
+            </svg>
+
+            Tiruchi
+        </div>
+
+
+        <!-- Madurai -->
+        <div onclick="selectCity('Madurai')" 
+             style="padding: 6px 12px; cursor: pointer;  font-size: 16px;"
+             onmouseover="this.style.background='#f0f0f0';"
+             onmouseout="this.style.background='white';">
+
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#040404ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 21s-6-5.686-6-10a6 6 0 1 1 12 0c0 4.314-6 10-6 10z"></path>
+                <circle cx="12" cy="11" r="3"></circle>
+            </svg>
+
+            Madurai
+        </div>
+
+    </div>
+</div>
+
+
+            <div style="
+                background: #EFEFEF;
+                padding: 6px 12px;
+                border-radius: 20px;
+                font-size: 14px;
+                font-weight: 700;
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            ">
+               ₿ <span>{{ coins }} Coins</span>
+            </div>
+
+            <div style="
+                width: 38px;
+                height: 38px;
+                background: #1e293b;
+                border-radius: 50%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 16px;
+                color: white;
+            ">👤</div>
+        </div>
+    </header>
+
+    <hr style="margin: 0; border: none; border-top: 1px solid #d0d0d0;">
+
+    <!-- MAIN CONTENT (empty for now, just to see header) -->
+    <main>
+        <!-- you can add movie list later -->
+    </main>
+
+    <!-- ONLY LOCATION ANIMATION JS -->
+    <script>
+        function toggleCityDropdown() {
+            const dropdown = document.getElementById('city-dropdown');
+            const arrow = document.getElementById('arrow-icon');
+
+            const isOpen = dropdown && dropdown.style.display === 'block';
+            if (!dropdown) return;
+
+            dropdown.style.display = isOpen ? 'none' : 'block';
+            if (arrow) arrow.style.transform = isOpen ? "rotate(315deg)" : "rotate(405deg)";
+        }
+
+        function selectCity(city) {
+            const el = document.getElementById('current-city');
+            if (el) el.textContent = city;
+
+            const dropdown = document.getElementById('city-dropdown');
+            const arrow = document.getElementById('arrow-icon');
+
+            if (dropdown) dropdown.style.display = 'none';
+            if (arrow) arrow.style.transform = "rotate(315deg)";
+
+            // 🔥 Redirect to the new city's page
+            window.location.href = "/homepage/" + city + "/";
+        }
+
+        document.addEventListener('click', function (event) {
+            const toggle = document.getElementById('location-toggle');
+            const dropdown = document.getElementById('city-dropdown');
+
+            if (!toggle || !dropdown) return;
+            if (!toggle.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.style.display = 'none';
+                const arrow = document.getElementById('arrow-icon');
+                if (arrow) arrow.style.transform = 'rotate(315deg)';
+            }
+        });
+
+        function selectCityAndNavigate(citySlug, cityName){
+          if (cityName) {
+            const el = document.getElementById('current-city');
+            if (el) el.textContent = cityName;
+          }
+          // later you can change this URL to go to city-specific page
+          // for now we just close dropdown
+          const dropdown = document.getElementById('city-dropdown');
+          if (dropdown) dropdown.style.display = 'none';
+        }
+    </script>
+
+  <!-- PAGE MAIN CONTENT -->
+<main>
+    {% block content %}
+    {% endblock %}
+</main>
+</body>
+</html>
+
+

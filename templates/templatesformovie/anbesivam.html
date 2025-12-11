@@ -1,0 +1,457 @@
+{% extends "homepage.html" %}
+{% load static %}
+
+{% block content %}
+
+<style>
+/* POPUP */
+.ticket-popup-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
+.ticket-popup-backdrop.show { display: flex; }
+
+.ticket-toast {
+    background: #21c065;
+    color: #ffffff;
+    padding: 8px 24px;
+    border-radius: 999px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+}
+
+.ticket-modal {
+    position: relative;
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 26px 28px 38px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    box-shadow: 0 22px 50px rgba(0,0,0,0.45);
+    min-width: 520px;
+    max-width: 640px;
+    font-family: 'Poppins', sans-serif;
+}
+.ticket-modal-top {
+    display: flex;
+    gap: 26px;
+}
+.ticket-close-icon {
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    background: transparent;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    color: #777;
+    padding: 0;
+    line-height: 1;
+}
+.ticket-modal-left img {
+    width: 150px;
+    height: 220px;
+    border-radius: 12px;
+    object-fit: cover;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+}
+.ticket-modal-right { flex: 1; display: flex; flex-direction: column; }
+.ticket-theatre { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+.ticket-movie { font-size: 34px; font-weight: 800; margin-bottom: 8px; }
+.ticket-showtime, .ticket-seats-label { font-size: 14px; margin-bottom: 4px; }
+.ticket-seats-value { font-size: 14px; font-weight: 600; margin-bottom: 10px; }
+.ticket-barcode-area {
+    width: 80%;
+    height: 130px;
+    border-radius: 12px;
+    background: #f7f7f7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px 24px;
+    margin-top: 10px;
+}
+.ticket-barcode {
+    width: 100%;
+    max-width: 360px;
+    max-height: 110px;
+    object-fit: contain;
+}
+.ticket-screenshot-note {
+    margin-top: 12px;
+    font-size: 13px;
+    color: #ffffff;
+    text-align: center;
+}
+
+/* SEAT STATES */
+.seat.selected {
+    background: #00c853 !important;
+    color: #ffffff !important;
+    border-color: #00c853 !important;
+}
+.seat.disabled {
+    border-color: #b0b0b0;
+    background: #f0f0f0;
+    color: #b0b0b0;
+    cursor: not-allowed;
+}
+.seat.disabled::before,
+.seat.disabled::after {
+    content: none !important;   /* no X mark */
+}
+
+/* PAY BAR */
+.seat-pay-bar {
+    margin-top: 18px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    background: #00c853;
+    color: #ffffff;
+    display: none;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+}
+.seat-pay-bar.show { display: flex; }
+.seat-pay-btn {
+    background: #ffffff;
+    color: #00c853;
+    padding: 8px 18px;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+/* PAGE LAYOUT (same as yours, shortened a bit) */
+.movie-page-wrap { font-family: 'Poppins', sans-serif; padding: 32px 80px; }
+.movie-layout { display: flex; gap: 40px; margin-top: 24px; }
+.movie-left { flex: 0 0 45%; display: flex; gap: 28px; }
+.movie-poster-wrap { flex: 0 0 260px; }
+.movie-poster-wrap img {
+    width: 260px; height: 390px; object-fit: cover;
+    border-radius: 18px; box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+}
+.movie-info { flex: 1; padding-top: 40px; }
+.movie-title-row h1 { margin: 0; font-size: 44px; font-weight: 700; }
+.movie-meta { margin: 8px 0 0; color: #666; font-size: 14px; }
+.movie-chips { display: flex; gap: 16px; margin-top: 16px; font-size: 14px; }
+.chip-dark, .chip-likes, .chip-light {
+    padding: 10px 14px; border-radius: 999px;
+}
+.chip-dark { background:#111; color:#fff; }
+.chip-likes { background:#111; color:#00e676; }
+.chip-light { background:#f5f5f5; color:#111; }
+.movie-desc { margin-top: 18px; font-size: 14px; color:#333; max-width:360px; line-height:1.5; }
+.movie-right { flex:0 0 55%; padding-left:40px; padding-top:8px; }
+.theatre-name { font-size:16px; font-weight:600; margin-bottom:16px; }
+
+/* DATE STRIP (disabled) */
+.date-strip { display:flex; gap:10px; margin-bottom:24px; }
+.date-card {
+    border:none; cursor:default; padding:8px 12px; border-radius:12px;
+    min-width:68px; display:flex; flex-direction:column; align-items:center;
+    justify-content:center; background:#f5f5f5; color:#555; font-size:10px;
+    letter-spacing:.5px; text-decoration:none; pointer-events:none; opacity:.75;
+}
+.date-card.active { background:#ff3366; color:#fff; opacity:1; }
+.date-card .date-num { font-size:18px; font-weight:600; margin:2px 0; }
+
+/* TIME SLOTS */
+.showtime-row { display:flex; gap:12px; margin-bottom:10px; }
+.time-slot {
+    border:1px solid #28a745; background:#fff;
+    border-radius:10px; padding:4px 12px; cursor:pointer;
+    display:inline-flex; flex-direction:column; align-items:center; justify-content:center;
+    font-family:'Poppins', sans-serif; margin-bottom:10px;
+}
+.time-slot-full {
+    border-color:#ccc; background:#f5f5f5; color:#999; cursor:not-allowed;
+}
+.time-slot-active { border-color:#28a745; background:#fff; }
+.show-info { font-size:12px; color:#777; margin-bottom:20px; }
+
+/* SEAT MAP */
+.seat-map-wrapper {
+    border-radius:16px; border:1px solid #eee;
+    padding:18px 20px 22px; max-width:520px;
+}
+.seat-legend { font-size:12px; color:#777; margin-bottom:24px; }
+.seat-label { width:20px; font-size:12px; font-weight:600; color:#555; text-align:center; }
+.seat-row-wrap { display:flex; align-items:center; gap:14px; margin-bottom:16px; }
+.seat-row { display:flex; gap:8px; }
+.seat {
+    width:26px; height:26px; font-size:10px; border-radius:4px;
+    display:flex; align-items:center; justify-content:center;
+    border:1px solid #00c853; color:#00c853; cursor:pointer;
+}
+.seat-gap { width:30px; }
+.seat-spacer { width:26px; height:26px; }
+</style>
+
+<div class="movie-page-wrap">
+    <a href="javascript:history.back()" style="text-decoration:none; font-size:14px;">← Back</a>
+
+    <!-- POPUP -->
+    <div id="ticketOverlay" class="ticket-popup-backdrop">
+        <div class="ticket-toast">Payment is successful! This is your ticket.</div>
+
+        <div class="ticket-modal">
+            <button id="ticketClose" type="button" class="ticket-close-icon">&times;</button>
+
+            <div class="ticket-modal-top">
+                <div class="ticket-modal-left">
+                    <img src="{% static 'movies/anbe_sivam.jpg' %}" alt="anbe_sivam poster">
+                </div>
+                <div class="ticket-modal-right">
+                    <div class="ticket-theatre">AGS Cinemas: Maduravoyal</div>
+                    <div class="ticket-movie">Anbe Sivam</div>
+                    <div id="ticketShowtime" class="ticket-showtime">
+                        {{ selected_label }} • 10:00 PM
+                    </div>
+                    <div class="ticket-seats-label">Seats:</div>
+                    <div id="ticketSeats" class="ticket-seats-value">A1, A2</div>
+                </div>
+            </div>
+
+            <div class="ticket-barcode-area">
+                <img id="ticketBarcode" class="ticket-barcode"
+                     src="https://barcodeapi.org/api/128/TUE-09-DEC" alt="barcode">
+            </div>
+        </div>
+
+        <div class="ticket-screenshot-note">
+            📸 Take a screenshot of this ticket for entry.
+        </div>
+    </div>
+
+    <div class="movie-layout">
+        <!-- LEFT -->
+        <div class="movie-left">
+            <div class="movie-poster-wrap">
+                <img src="{% static 'movies/anbe_sivam.jpg' %}" alt="anbe_sivam poster">
+            </div>
+            <div class="movie-info">
+                <div class="movie-title-row"><h1>Anbe Sivam</h1></div>
+                <p class="movie-meta">Comedy / Drama • Tamil • 2003 • 2h 40m</p>
+                <div class="movie-chips">
+                    <div class="chip-dark">⭐ 8.6/10</div>
+                    <div class="chip-likes">✔ 90K+ votes</div>
+                    <div class="chip-light">U</div>
+                </div>
+                <p class="movie-desc">
+                    This is Kollywood's all-time highest grosser and it took Tamil cinema to a global level.
+                </p>
+            </div>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="movie-right">
+            <div class="theatre-name">AGS Cinemas: Maduravoyal</div>
+
+            <div class="date-strip">
+                {% for d in days %}
+                <a href="?d={{ d.iso }}" class="date-card{% if d.is_active %} active{% endif %}">
+                    <span>{{ d.weekday }}</span>
+                    <span class="date-num">{{ d.day }}</span>
+                    <span>{{ d.month }}</span>
+                </a>
+                {% endfor %}
+            </div>
+
+            <div class="showtime-row">
+                <div class="time-slot time-slot-full">
+                    <span class="time-main">1:05 PM</span>
+                    <span class="time-sub">HOUSEFULL</span>
+                </div>
+                <div class="time-slot time-slot-full">
+                    <span class="time-main">6:05 PM</span>
+                    <span class="time-sub">HOUSEFULL</span>
+                </div>
+                <div class="time-slot time-slot-active">
+                    <span class="time-main">10:05 PM</span>
+                    <span class="time-sub">4K DOLBY ATMOS</span>
+                </div>
+            </div>
+
+            <div id="show-info" class="show-info">
+                {{ selected_label }} • 10:05 PM
+            </div>
+
+            <div class="seat-map-wrapper">
+                <div class="seat-legend">Select your seats</div>
+
+                {% for row in "ABCDE" %}
+                <div class="seat-row-wrap">
+                    <div class="seat-label">{{ row }}</div>
+                    <div class="seat-row">
+                        {% for i in "12345" %}
+                        <div class="seat" data-row="{{ row }}" data-num="{{ forloop.counter }}">
+                            {{ forloop.counter }}
+                        </div>
+                        {% endfor %}
+                        <div class="seat-gap"></div>
+                        {% for i in "12345" %}
+                        <div class="seat" data-row="{{ row }}" data-num="{{ forloop.counter|add:"5" }}">
+                            {{ forloop.counter|add:"5" }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+
+                <div class="seat-row-wrap">
+                    <div class="seat-label">F</div>
+                    <div class="seat-row">
+                        <div class="seat-spacer"></div>
+                        <div class="seat" data-row="F" data-num="1">1</div>
+                        <div class="seat" data-row="F" data-num="2">2</div>
+                        <div class="seat" data-row="F" data-num="3">3</div>
+                        <div class="seat" data-row="F" data-num="4">4</div>
+                        <div class="seat-gap"></div>
+                        <div class="seat" data-row="F" data-num="5">5</div>
+                        <div class="seat" data-row="F" data-num="6">6</div>
+                        <div class="seat" data-row="F" data-num="7">7</div>
+                        <div class="seat" data-row="F" data-num="8">8</div>
+                        <div class="seat-spacer"></div>
+                    </div>
+                </div>
+
+                <div id="seatPayBar" class="seat-pay-bar">
+                    <span id="seatPayText">No seats selected</span>
+                    <button id="seatPayBtn" class="seat-pay-btn" type="button">PAY</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const movieName = "anbesivam";
+
+document.addEventListener('DOMContentLoaded', function () {
+    const showDate = "{{ selected_date|date:'Y-m-d' }}";
+    const disabledSeats = {{ disabled_seats_json|default:"[]"|safe }};
+
+    const ticketOverlay  = document.getElementById('ticketOverlay');
+    const ticketCloseBtn = document.getElementById('ticketClose');
+    const ticketShowtime = document.getElementById('ticketShowtime');
+    const ticketSeats    = document.getElementById('ticketSeats');
+    const ticketBarcode  = document.getElementById('ticketBarcode');
+    const showInfo       = document.getElementById('show-info');
+
+    // 1) mark seats from backend
+    const allSeats = document.querySelectorAll('.seat');
+    allSeats.forEach(seat => {
+        const label = seat.dataset.row + seat.dataset.num;
+        if (disabledSeats.includes(label)) {
+            seat.classList.add('disabled');
+        }
+    });
+
+    // 2) handle selection + pay bar
+    const bar       = document.getElementById('seatPayBar');
+    const text      = document.getElementById('seatPayText');
+    const payBtn    = document.getElementById('seatPayBtn');
+    const seatPrice = 10;
+
+    function updateBar() {
+        const selectedSeats = document.querySelectorAll('.seat.selected');
+        const count = selectedSeats.length;
+        if (count > 0) {
+            const total = count * seatPrice;
+            text.textContent = `${count} seat(s) • ${total} Bitcoin`;
+            bar.classList.add('show');
+        } else {
+            text.textContent = 'No seats selected';
+            bar.classList.remove('show');
+        }
+    }
+
+    allSeats.forEach(seat => {
+        seat.addEventListener('click', () => {
+            if (seat.classList.contains('disabled')) return;
+            seat.classList.toggle('selected');
+            updateBar();
+        });
+    });
+
+    // 3) PAY
+    if (payBtn) {
+        payBtn.addEventListener('click', () => {
+            const selectedSeats = document.querySelectorAll('.seat.selected');
+            if (!selectedSeats.length) {
+                alert("Please select at least one seat.");
+                return;
+            }
+
+            const seatNumbers = [];
+            selectedSeats.forEach(seat => {
+                seatNumbers.push(seat.dataset.row + seat.dataset.num);
+            });
+            const amount = selectedSeats.length * seatPrice;
+
+            fetch("{% url 'pay' %}", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: new URLSearchParams({
+                    amount: amount,
+                    seats: seatNumbers.join(","),
+                    show_date: showDate,
+                    movie_name: movieName
+                })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.ok) {
+                    ticketShowtime.textContent = showInfo.textContent;
+                    ticketSeats.textContent    = seatNumbers.join(", ");
+                    ticketBarcode.src = "https://barcodeapi.org/api/128/" +
+                        encodeURIComponent(seatNumbers.join('-') || 'TUE-09-DEC');
+
+                    // mark as permanent booked in UI
+                    selectedSeats.forEach(seat => {
+                        seat.classList.remove('selected');
+                        seat.classList.add('disabled');
+                    });
+                    updateBar();
+                    ticketOverlay.classList.add('show');
+                } else {
+                    alert(data.msg || "Payment failed. Please try again.");
+                }
+            })
+            .catch(() => {
+                alert("Something went wrong. Please try again.");
+            });
+        });
+    }
+
+    // 4) close popup – refresh only when X clicked
+    if (ticketCloseBtn) {
+        ticketCloseBtn.addEventListener('click', () => {
+            ticketOverlay.classList.remove('show');
+            window.location.reload();
+        });
+    }
+    if (ticketOverlay) {
+        ticketOverlay.addEventListener('click', (e) => {
+            if (e.target === ticketOverlay) ticketOverlay.classList.remove('show');
+        });
+    }
+});
+</script>
+
+{% endblock %}

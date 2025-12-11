@@ -1,0 +1,280 @@
+{# templates/homepage/chennai.html #}
+{% extends "homepage.html" %}
+{% load static %}
+
+{% block content %}
+
+<style>
+/* ----- MOVIE CAROUSEL CSS (ISOLATED - SAFE TO PASTE ANYWHERE) ----- */
+.movies-section { font-family: "Poppins", sans-serif; margin: 22px 40px; }
+.movies-header { display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px; }
+.movies-header h2 { margin:0; font-size:20px; font-weight:700; }
+.movies-header .see-all { color:#e11d48; text-decoration:none; font-size:14px; }
+
+/* Wrapper for slider */
+.movies-row-wrap{
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+}
+
+/* Scrollable row */
+.movies-row {
+  width: 100%;
+  display: flex;
+  gap: 28px;
+  overflow-x: auto;
+  padding: 18px 90px;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+}
+
+.movies-row::-webkit-scrollbar { height: 6px; }
+.movies-row::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
+
+/* Cards as BUTTONS */
+/* ------- NEW CLEAN ANIMATION (Replace old hover animation) ------- */
+
+/* CLEAN & PREMIUM OUTER CARD */
+.movie-card {
+    flex: 0 0 auto;
+    width: 220px;
+    scroll-snap-align: start;
+
+    cursor: pointer;
+    text-align: left;
+
+    /* modern rounded container */
+    background: #ffffff;
+    border-radius: 14px;
+
+    /* soft thin border */
+    border: 1px solid rgba(0,0,0,0.12);
+
+    /* natural shadow */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+
+    padding: 0;
+    outline: none;
+
+    /* keep your animation EXACTLY as you like */
+    transform: translateY(0);
+    transition:
+        transform 0.28s ease,
+        box-shadow 0.28s ease,
+        opacity 0.28s ease;
+}
+
+/* hover keeps your animation — only outer box improves */
+.movie-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 14px 30px rgba(0,0,0,0.22);
+    opacity: 0.96;
+}
+
+
+/* Active click effect */
+.movie-card:active {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+}
+
+
+.movie-card:focus-visible {
+  outline: 2px solid #e11d48;
+  outline-offset: 4px;
+}
+
+/* staggered intro animation */
+.movie-card:nth-child(1) { animation-delay: 0.05s; }
+.movie-card:nth-child(2) { animation-delay: 0.10s; }
+.movie-card:nth-child(3) { animation-delay: 0.15s; }
+.movie-card:nth-child(4) { animation-delay: 0.20s; }
+.movie-card:nth-child(5) { animation-delay: 0.25s; }
+
+@keyframes cardPop {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.poster-wrap {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  background:#ddd;
+  box-shadow: 0 0 0 rgba(0,0,0,0);
+  transition: box-shadow 0.25s ease, border 0.25s ease;
+}
+
+/* On hover: subtle glow on poster, NOT zoom */
+.movie-card:hover .poster-wrap {
+  box-shadow: 0 0 0 2px rgba(225,29,72,0.6);
+}
+
+/* image (NO ZOOM) */
+.poster-wrap img {
+  width:100%;
+  height:450px;
+  object-fit:cover;
+  transition: filter 0.3s ease;
+}
+
+/* just brighten a bit on hover */
+.movie-card:hover .poster-wrap img {
+  filter: brightness(1.07) saturate(1.05);
+}
+
+/* Rating box under poster */
+.poster-footer {
+  position:absolute;
+  left:10px; right:10px; bottom:10px;
+  background:rgba(0,0,0,0.88);
+  color:#fff;
+  display:flex; gap:8px;
+  padding:8px 12px;
+  border-radius:10px;
+}
+
+.movie-card-link {
+    text-decoration: none;   /* removes underline */
+    color: inherit;
+    display: inline-block;   /* or flex item; same for all cards */
+}
+
+.movie-card {
+    cursor: pointer;
+    /* keep your existing card styles here:
+       width, padding, border-radius, box-shadow, margin-right etc. */
+}
+
+
+
+.chip { font-size:13px; font-weight:600; }
+.chip.likes { color:#6ee7b7; }
+
+.meta { padding:12px 4px 0; }
+.title { margin: 8px 0 8px; font-size:16px; font-weight:700; }
+.genres { font-size:13px; color:#6b7280; }
+
+/* Promoted tag */
+.badge {
+  position:absolute;
+  top:12px; left:12px;
+  background:#ef476f;
+  color:#fff;
+  padding:6px 10px;
+  border-radius:6px;
+  font-size:12px;
+  font-weight:700;
+}
+</style>
+
+<section class="movies-section">
+  <div class="movies-header">
+    <h2>Recommended Movies</h2>
+  </div>
+
+  <div class="movies-row-wrap">
+    <div class="movies-row">
+
+      <!-- Card 1 -->
+      <a href="{% url 'movie_2_0' %}" class="movie-card-link">
+  <div class="movie-card">
+    <div class="poster-wrap">
+      <img src="{% static 'movies/two_point_zero.jpg' %}" alt="2.0">
+      <span class="badge">PROMOTED</span>
+      <div class="poster-footer">
+        <span class="chip">★ 6.3/10</span>
+        <span class="chip likes">✔ 120K+</span>
+      </div>
+    </div>
+    <div class="meta">
+      <h3 class="title">2.0</h3>
+      <div class="genres">Sci-Fi / Action</div>
+    </div>
+  </div>
+</a>
+<!-- Card 2 -->
+<a href="{% url 'anbesivam' %}" class="movie-card-link">
+  <div class="movie-card">
+    <div class="poster-wrap">
+      <img src="{% static 'movies/anbe_sivam.jpg' %}" alt="Anbe Sivam">
+      <div class="poster-footer">
+        <span class="chip">★ 8.6/10</span>
+        <span class="chip likes">✔ 90K+</span>
+      </div>
+    </div>
+    <div class="meta">
+      <h3 class="title">Anbe Sivam</h3>
+      <div class="genres">Comedy / Drama</div>
+    </div>
+  </div>
+</a>
+
+
+      <!-- Card 3 -->      
+<a href="{% url 'paruthiveeran' %}" class="movie-card-link">
+  <div class="movie-card">
+    <div class="poster-wrap">
+      <img src="{% static 'movies/paruthiveeran.jpg' %}" alt="Paruthiveeran">
+      <div class="poster-footer">
+        <span class="chip">★ 8.1/10</span>
+        <span class="chip likes">✔ 188K+</span>
+      </div>
+    </div>
+    <div class="meta">
+      <h3 class="title">Paruthiveeran</h3>
+      <div class="genres">Drama / Rural</div>
+    </div>
+  </div>
+</a>
+
+
+      <!-- Card 4 -->
+<a href="{% url 'o_kadhal_kanmani' %}" class="movie-card-link">
+  <div class="movie-card">
+    <div class="poster-wrap">
+      <img src="{% static 'movies/okadhal_kanmani.jpg' %}" alt="O Kadhal Kanmani">
+      <div class="poster-footer">
+        <span class="chip">★ 8.3/10</span>
+        <span class="chip likes">✔ 27K+</span>
+        
+      </div>
+    </div>
+    <div class="meta">
+      <h3 class="title">O Kadhal Kanmani</h3>
+      <div class="genres">Romance / Drama</div>
+    </div>
+  </div>
+</a>
+
+
+      <!-- Card 5 -->
+<a href="{% url 'adithya_varma' %}" class="movie-card-link">
+  <div class="movie-card">
+    <div class="poster-wrap">
+      <img src="{% static 'movies/classic_pick.jpg' %}" alt="Adithya Varma">
+      <div class="poster-footer">
+        <span class="chip">★ 7.4/10</span>
+        <span class="chip likes">✔ 40K+</span>
+      </div>
+    </div>
+    <div class="meta">
+      <h3 class="title">Adithya Varma</h3>
+      <div class="genres">Drama</div>
+    </div>
+  </div>
+</a>
+
+</section>
+
+{% endblock %}

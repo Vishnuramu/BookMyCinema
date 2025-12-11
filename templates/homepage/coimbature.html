@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Service Not Available</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            font-family: "Poppins", Arial, sans-serif;
+            background: #f8f8f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .box {
+            text-align: center;
+            background: white;
+            padding: 40px 50px;
+            border-radius: 14px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #222;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        .back-btn {
+            padding: 12px 26px;
+            background: #1f2937;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .back-btn:hover {
+            background: #111;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="box">
+        <div class="title">Service is not available for this location</div>
+        <div class="subtitle">(Currently we support Chennai only)</div>
+
+        <button class="back-btn" onclick="window.location.href='/homepage/chennai/'">
+            Go to Chennai
+        </button>
+    </div>
+
+</body>
+</html>

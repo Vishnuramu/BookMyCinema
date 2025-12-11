@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign In – BookMyCinema</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        @keyframes slideFade {
+            0% {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-show {
+            animation: slideFade 0.35s ease forwards;
+        }
+
+        /* Page background (same dark neon style as mainlogin) */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background:
+                radial-gradient(circle at 20% 30%, rgba(173, 216, 230, 0.35), transparent 40%),
+                radial-gradient(circle at 80% 40%, rgba(255, 192, 203, 0.25), transparent 50%),
+                radial-gradient(circle at 50% 80%, rgba(144, 238, 144, 0.25), transparent 40%),
+                linear-gradient(135deg, #0B0F1A, #05070D);
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Glass card in center */
+        .glass-box {
+            width: 360px;
+            padding: 90px 45px 80px 45px;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(14px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            animation: slideFade 0.35s ease forwards;
+            color: #fff;
+        }
+
+        .logo {
+            font-size: 40px;
+            font-weight: 700;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0px;
+            margin-top: -12px;   /* move logo slightly up */
+            margin-bottom: 30px; /* increase distance to inputs */
+        }
+
+        /* Input group layout keep widths same as before but styled */
+        #email-box, #otp-box, #password-box {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 260px;
+            margin: 0 auto;
+        }
+
+        input {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            font-size: 14px;
+            outline: none;
+            background: rgba(255,255,255,0.03);
+            color: #fff;
+        }
+
+        input::placeholder { color: #cfcfd0; }
+
+        button {
+            padding: 10px;
+            border-radius: 999px;
+            border: 1px solid #111827;
+            background: #111827;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        #login-btn {
+            display: none;
+            margin-top: 10px;
+            width: 260px;
+            padding: 10px 14px;
+            border-radius: 999px;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            background: #050816;
+            color: #fff;
+        }
+
+        /* small verification message */
+        #email-verify-msg {
+            font-size: 12px;
+            margin: 5px 0 0 5px;
+            color: #00c853;
+            display: none;
+        }
+
+        .tagline {
+        position: absolute;
+        bottom: 20px;
+        width: 100%;
+        text-align: center;
+        color: #b3b3b3;
+        font-size: 13px;
+}
+
+        
+
+        /* make sure hidden blocks keep same spacing */
+        #otp-box, #password-box { display: none; }
+    </style>
+</head>
+
+<body>
+
+    <!-- Center glass card -->
+    <div class="glass-box">
+
+        <!-- Logo (same as mainlogin) -->
+        <div class="logo">
+            <span>B</span>
+
+            <svg width="65" height="50" viewBox="0 0 64 48" fill="none"
+                 xmlns="http://www.w3.org/2000/svg"
+                 style="margin-left: -4px; margin-right: -3px; margin-top: -10px;">
+
+                <path d="M16 20 L24 8 H40 L48 20 Z"
+                      fill="#ffffff"
+                      transform="translate(0, -4)" />
+
+                <rect x="12" y="20" width="40" height="4"
+                      fill="#ffffff"
+                      transform="translate(0, -4)" />
+
+                <circle cx="22" cy="32" r="7" stroke="#ffffff" stroke-width="3" fill="none" />
+                <circle cx="42" cy="32" r="7" stroke="#ffffff" stroke-width="3" fill="none" />
+
+                <path d="M31 32 H33" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
+            </svg>
+
+            <span>KmyCinema</span>
+        </div>
+
+        <!-- Email box -->
+        <div id="email-box">
+            <input id="email-input" type="email"
+                   placeholder="Enter your email"
+                   onkeypress="if(event.key==='Enter'){ showOTP(); }">
+
+            <p id="email-verify-msg">Email verified successfully</p>
+
+            <button id="login-btn" onclick="window.location.href='/mainlogin/'">Login</button>
+
+            <button id="verify-btn" onclick="showOTP()">Verify Email</button>
+        </div>
+
+        <!-- OTP box (hidden at first) -->
+        <div id="otp-box">
+            <input id="otp-input" type="text"
+                   placeholder="Enter OTP"
+                   onkeypress="if(event.key==='Enter'){ verifyOTP(); }">
+
+            <button onclick="verifyOTP()">Verify OTP</button>
+        </div>
+
+        <!-- Password box (hidden at first) -->
+        <div id="password-box">
+            <input id="password-input" type="password"
+                   placeholder="Create password"
+                   onkeypress="if(event.key==='Enter'){ completeSignup(); }">
+
+            <button onclick="completeSignup()">Sign Up</button>
+        </div>
+
+        
+    </div>
+    <div class="tagline">Experience movies like never before 🎬</div>
+
+    <script>
+    function showOTP() {
+    const emailInput = document.getElementById("email-input");
+    const email = emailInput.value;
+    const msg = document.getElementById("email-verify-msg");
+    const loginBtn = document.getElementById("login-btn");
+
+    if (email.trim() === "") {
+        alert("Please enter email");
+        return;
+    }
+
+    fetch("/send-otp/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: "email=" + encodeURIComponent(email)
+    })
+    .then(response => response.json())
+    .then(data => {
+        // reset login button & text each time
+        loginBtn.style.display = "none";
+
+        if (data.status === "ok") {
+            // NEW USER → normal OTP flow
+
+            document.getElementById("verify-btn").style.display = "none";
+
+            const otpBox = document.getElementById("otp-box");
+            otpBox.style.display = "flex";
+            otpBox.classList.add("animate-show");
+
+            // normal border, hide text
+            emailInput.style.border = "1px solid #000";
+            msg.style.display = "none";
+        }
+        else if (data.status === "exists") {
+    // ALREADY REGISTERED USER
+
+    const emailInput = document.getElementById("email-input");
+    const msg = document.getElementById("email-verify-msg");
+    const loginBtn = document.getElementById("login-btn");
+    const verifyBtn = document.getElementById("verify-btn");
+
+    // Hide verify button
+    verifyBtn.style.display = "none";
+
+    // Style input box
+    emailInput.style.border = "2px solid #c80000ff";
+
+    // Show message under input box
+    msg.innerText = "You are already a user. Please log in.";
+    msg.style.color = "#ffffffff";
+    msg.style.display = "block";
+
+    // Show login button
+    loginBtn.style.display = "block";
+
+    // Hide OTP box & password box if visible
+    document.getElementById("otp-box").style.display = "none";
+    document.getElementById("password-box").style.display = "none";
+}
+
+        else {
+            // other error
+            emailInput.style.border = "2px solid #d50000";
+            msg.innerText = data.message || "Failed to send OTP";
+            msg.style.color = "#d50000";
+            msg.style.display = "block";
+        }
+    })
+    .catch(error => {
+        console.error(error);
+        emailInput.style.border = "2px solid #d50000";
+    });
+}
+
+
+    function verifyOTP() {
+        const emailInput = document.getElementById("email-input");
+        const otp = document.getElementById("otp-input").value;
+
+        if (otp.trim() === "") {
+            alert("Enter OTP");
+            return;
+        }
+
+        // Call backend to verify OTP
+        fetch("/verify-otp/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: "otp=" + encodeURIComponent(otp)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === "ok") {
+                // ✔ OTP correct → green border on email box
+                emailInput.style.border = "2px solid #00c853";
+                document.getElementById("email-verify-msg").style.display = "block";
+
+
+                // show password box like before
+                document.getElementById("otp-box").style.display = "none";
+                const pwBox = document.getElementById("password-box");
+                pwBox.style.display = "flex";
+                pwBox.classList.add("animate-show");
+            } else {
+                // ❌ OTP wrong → red border on email box
+                emailInput.style.border = "2px solid #d50000";
+                document.getElementById("email-verify-msg").style.display = "none";
+            }
+        })
+        .catch(error => {
+            console.error(error);
+            // error verifying → treat as wrong OTP
+            emailInput.style.border = "2px solid #d50000";
+        });
+    }
+
+    function completeSignup() {
+    const email = document.getElementById("email-input").value;
+    const pw = document.getElementById("password-input").value;
+
+    if (pw.trim() === "") {
+        alert("Create a password");
+        return;
+    }
+
+    fetch("/save-password/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body:
+            "email=" + encodeURIComponent(email) +
+            "&password=" + encodeURIComponent(pw)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "ok") {
+
+            // 🚀 Redirect to HOME page after signup
+            window.location.href = "http://127.0.0.1:8000/location/";
+        } else {
+            alert(data.message || "Failed to save user");
+        }
+    })
+    .catch(error => {
+        console.error(error);
+        alert("Something went wrong.");
+    });
+}
+
+    
+</script>
+
+</body>
+</html>
