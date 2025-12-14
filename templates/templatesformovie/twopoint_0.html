@@ -229,7 +229,9 @@
 
             <div class="ticket-barcode-area">
                 <img id="ticketBarcode" class="ticket-barcode"
-                     src="https://barcodeapi.org/api/128/TUE-09-DEC" alt="barcode">
+     src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=TUE-09-DEC"
+     alt="qrcode">
+
             </div>
         </div>
 
@@ -418,8 +420,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (data.ok) {
                     ticketShowtime.textContent = showInfo.textContent;
                     ticketSeats.textContent    = seatNumbers.join(", ");
-                    ticketBarcode.src = "https://barcodeapi.org/api/128/" +
-                        encodeURIComponent(seatNumbers.join('-') || 'TUE-09-DEC');
+                    ticketBarcode.src =
+    "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" +
+    encodeURIComponent(seatNumbers.join('-') || 'TUE-09-DEC');
+
 
                     // mark as permanent booked in UI
                     selectedSeats.forEach(seat => {
@@ -446,10 +450,14 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
     if (ticketOverlay) {
-        ticketOverlay.addEventListener('click', (e) => {
-            if (e.target === ticketOverlay) ticketOverlay.classList.remove('show');
-        });
-    }
+    ticketOverlay.addEventListener('click', (e) => {
+        if (e.target === ticketOverlay) {
+            ticketOverlay.classList.remove('show');
+            window.location.reload();   // 🔥 REFRESH PAGE
+        }
+    });
+}
+
 });
 </script>
 

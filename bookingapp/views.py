@@ -103,9 +103,12 @@ def location_page(request):
 # -------------------------------------------------------------------
 def _movie_page(request, movie_name, template_name):
     coins = _get_user_coins(request)
+
+    # 🔥 Get city from session
+    city = request.session.get("city", "Select Location")
+
     today = date.today()
 
-    # selected date from query ?d=YYYY-MM-DD
     selected_date_str = request.GET.get("d")
     if selected_date_str:
         try:
@@ -115,11 +118,9 @@ def _movie_page(request, movie_name, template_name):
     else:
         selected_date = today
 
-    # only allow 3 days from today
     if selected_date < today or selected_date > today + timedelta(days=2):
         selected_date = today
 
-    # build 3-day strip
     days = []
     for i in range(3):
         d = today + timedelta(days=i)
@@ -138,7 +139,6 @@ def _movie_page(request, movie_name, template_name):
         (d["label"] for d in days if d["is_active"]), days[0]["label"]
     )
 
-    # seats disabled for THAT movie + date
     disabled_qs = SeatBooking.objects.filter(
         show_date=selected_date,
         movie_name=movie_name,
@@ -147,13 +147,16 @@ def _movie_page(request, movie_name, template_name):
     disabled_seats_json = json.dumps(disabled_seats)
 
     context = {
+        "city": city.capitalize(),   # 🔥 FIX
         "days": days,
         "selected_date": selected_date,
         "selected_label": selected_label,
         "disabled_seats_json": disabled_seats_json,
         "coins": coins,
     }
+
     return render(request, template_name, context)
+
 
 
 
