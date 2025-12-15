@@ -1,1 +1,13 @@
 .venv/
+
+# Environment / secrets
+.env
+cinema/settings.py
+
+# Python
+__pycache__/
+*.pyc
+
+# Django
+db.sqlite3
+staticfiles/
