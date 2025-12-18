@@ -50,7 +50,7 @@ def homepage(request, city=None):
         "chennai": "homepage/chennai.html",
         "dindigul": "homepage/dindigul.html",
         "madurai": "homepage/madurai.html",
-        "coimbatore": "homepage/coimbatore.html",
+        "coimbatore": "homepage/coimbature.html",
         "tiruchi": "homepage/tiruchi.html",
     }
 

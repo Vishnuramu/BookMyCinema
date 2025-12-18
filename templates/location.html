@@ -131,10 +131,42 @@
             font-weight: 700;
             cursor: pointer;
         }
+
+        /* FULL PAGE LOADER */
+#page-loader {
+    position: fixed;
+    inset: 0;
+    background: #ffffff;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* SPINNER */
+.loader-spinner {
+    width: 48px;
+    height: 48px;
+    border: 4px solid #e5e7eb;
+    border-top: 4px solid #1f2937;
+    border-radius: 50%;
+    animation: spin 0.9s linear infinite;
+}
+
+/* ANIMATION */
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
     </style>
 </head>
 
 <body>
+    <!-- PAGE LOADER -->
+<div id="page-loader">
+    <div class="loader-spinner"></div>
+</div>
+
 
 <!-- Include global header -->
 {% include "homepage.html" %}
@@ -190,6 +222,16 @@
 
     </div>
 </div>
+<script>
+window.addEventListener("load", () => {
+    const loader = document.getElementById("page-loader");
+    if (loader) {
+        loader.style.opacity = "0";
+        loader.style.transition = "opacity 0.3s ease";
+        setTimeout(() => loader.remove(), 300);
+    }
+});
+</script>
 
 <script>
 function openCityPopup() {
