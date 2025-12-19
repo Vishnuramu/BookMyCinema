@@ -5,9 +5,14 @@
     <meta charset="UTF-8" />
     <title>Choose location — BookMyCinema</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Loader CSS -->
+    <link rel="stylesheet" href="{% static 'css/loader.css' %}">
+
+    <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
-    <!-- PRELOAD IMAGES FOR FAST RENDER -->
+    <!-- Preload Images -->
     <link rel="preload" as="image" href="{% static 'movies/chennai1.png' %}">
     <link rel="preload" as="image" href="{% static 'movies/dindigul1.png' %}">
     <link rel="preload" as="image" href="{% static 'movies/madurai5.png' %}">
@@ -15,104 +20,120 @@
     <link rel="preload" as="image" href="{% static 'movies/thiruchi.png' %}">
 
     <style>
+        :root {
+            --brand-font: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+            --logo-font-size: 28px;
+            --logo-font-weight: 700;
+            --logo-line-height: 1;
+        }
+
         body {
             margin: 0;
-            padding: 0;
-            font-family: "Poppins", sans-serif;
-            overflow-x: hidden;
+            font-family: var(--brand-font);
+            background: #f6f6f6;
+            color: #111;
         }
 
-        /* Faster popup backdrop (NO BLUR) */
-        #city-popup-backdrop {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.55);
-            display: none;
+        /* HEADER */
+        header {
+            width: 100%;
+            background: #fcfcfc;
+            padding: 14px 40px;
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            z-index: 9999;
-
-            opacity: 0;
-            transition: opacity 0.25s ease-out;
+            box-sizing: border-box;
         }
-        #city-popup-backdrop.show { opacity: 1; }
 
-        /* Popup box */
-        /* Desktop popup size */
-#city-popup {
-    width: 900px;      /* FIXED DESKTOP WIDTH */
-    height: 420px;     /* FIXED DESKTOP HEIGHT */
-    max-width: 90%;    /* ensures it doesn't break smaller screens */
-    background: #fff;
-    padding: 26px;
-    border-radius: 14px;
-    box-sizing: border-box;
-    overflow-y: auto;
-}
+        header .logo {
+          font-family: var(--brand-font);
+          font-size: var(--logo-font-size);
+          font-weight: var(--logo-font-weight);
+          line-height: var(--logo-line-height);
+          color: #111;
+          display: inline-flex;
+          align-items: center;
+        }
 
-/* Mobile popup size */
-@media (max-width: 600px) {
-    #city-popup {
-        width: 95%;        /* FULL WIDTH ON MOBILE */
-        height: 420px;     /* FIXED MOBILE HEIGHT */
-        padding: 18px;     /* LESS PADDING */
-        border-radius: 12px;
-    }
-}
+        header .logo svg,
+        header .logo svg path,
+        header .logo svg rect,
+        header .logo svg circle {
+            fill: currentColor !important;
+            stroke: currentColor !important;
+        }
+        header .logo svg circle {
+            fill: none !important;
+            stroke: currentColor !important;
+        }
 
+        header .logo span:first-child {
+          font-family: var(--brand-font);
+          font-weight: var(--logo-font-weight);
+          font-size: calc(var(--logo-font-size) + 2px);
+          line-height: var(--logo-line-height);
+        
+        }
 
-        #city-popup h2 {
+        /* PAGE CENTER */
+        .page-center {
+            min-height: calc(100vh - 70px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            align-items: flex-start;   
+            padding-top: 60px;
+        }
+
+        .location-box {
+            width: 900px;
+            max-width: 100%;
+            background: #fff;
+            padding: 26px;
+            border-radius: 14px;
+        }
+
+        .title {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .title h2 {
             margin: 0;
             font-size: 26px;
-            font-weight: 700;
         }
 
-        #city-popup p {
-            margin: 4px 0 18px;
-            color: #666;
+        .title p {
+            margin-top: 6px;
             font-size: 13px;
+            color: #666;
         }
-        .popup-title {
-    text-align: center;           /* CENTER TEXT */
-    width: 100%;                  /* ENSURE FULL WIDTH */
-    display: flex;
-    flex-direction: column;
-    align-items: center;          /* CENTER PERFECTLY */
-    justify-content: center;
-    margin-bottom: 20px;          /* Space below title */
-}
 
-
-        /* Image row (fast horizontal scroll) */
+        /* CITY ROW */
         .images-row {
             display: flex;
             gap: 22px;
             overflow-x: auto;
             padding: 10px 0;
-            width: 100%;
             scrollbar-width: none;
-            -webkit-overflow-scrolling: touch;
         }
-        .images-row::-webkit-scrollbar { display: none; }
+
+        .images-row::-webkit-scrollbar {
+            display: none;
+        }
 
         .image-card {
-            flex: 0 0 auto;
             width: 150px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            align-items: center;
+            flex-shrink: 0;
+            text-align: center;
         }
 
         .image-box {
             width: 150px;
             height: 180px;
-            background: #fff;
             border-radius: 8px;
             overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         .image-box img {
@@ -122,150 +143,117 @@
         }
 
         .image-select-btn {
+            margin-top: 10px;
             width: 120px;
             padding: 10px;
             background: #1f2937;
-            color: white;
+            color: #fff;
             border: none;
             border-radius: 8px;
             font-weight: 700;
             cursor: pointer;
         }
 
-        /* FULL PAGE LOADER */
-#page-loader {
-    position: fixed;
-    inset: 0;
-    background: #ffffff;
-    z-index: 99999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+        .image-select-btn:hover {
+            background: #111827;
+        }
 
-/* SPINNER */
-.loader-spinner {
-    width: 48px;
-    height: 48px;
-    border: 4px solid #e5e7eb;
-    border-top: 4px solid #1f2937;
-    border-radius: 50%;
-    animation: spin 0.9s linear infinite;
-}
-
-/* ANIMATION */
-@keyframes spin {
-    to { transform: rotate(360deg); }
-}
-
+        @media (max-width: 600px) {
+            .location-box {
+                padding: 18px;
+            }
+        }
     </style>
 </head>
 
 <body>
-    <!-- PAGE LOADER -->
-<div id="page-loader">
-    <div class="loader-spinner"></div>
-</div>
 
+<!-- PAGE LOADER -->
+{% include "partials/loader.html" %}
 
-<!-- Include global header -->
-{% include "homepage.html" %}
+<!-- HEADER -->
+<header>
+    <div class="logo">
+            <span>B</span>
 
-<!-- POPUP BACKDROP -->
-<div id="city-popup-backdrop">
-    <div id="city-popup">
+            <svg width="65" height="50" viewBox="0 0 64 48" fill="none"
+                 xmlns="http://www.w3.org/2000/svg"
+                 style="margin-left: -4px; margin-right: -3px; margin-top: -10px;">
+                <path d="M16 20 L24 8 H40 L48 20 Z" transform="translate(0, -5)" />
+                <rect x="12" y="20" width="40" height="6" transform="translate(0, -5)" />
+                <circle cx="22" cy="32" r="7" stroke-width="4" fill="none" />
+                <circle cx="42" cy="32" r="7" stroke-width="4" fill="none" />
+                <path d="M31 32 H33" stroke-width="3" stroke-linecap="round" />
+            </svg>
 
-        <div class="popup-title">
-    <h2>Choose your location</h2>
-    <p>(Currently the service is available in Chennai only)</p>
-</div>
+            <span>KmyCinema</span>
+        </div>
 
+    <div style="display:flex;align-items:center;gap:35px;">
+        <div style="background:#EFEFEF;padding:6px 12px;border-radius:20px;font-weight:700;">
+            ₿ {{ coins }} Coins
+        </div>
+        <div style="width:38px;height:38px;background:#1e293b;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;">
+            👤
+        </div>
+    </div>
+</header>
+
+<!-- MAIN CONTENT -->
+<div class="page-center">
+    <div class="location-box">
+        <div class="title">
+            <h2>Choose your location</h2>
+            <p>(Currently the service is available in Chennai only)</p>
+        </div>
 
         <div class="images-row">
+            
 
             <div class="image-card">
                 <div class="image-box">
                     <img src="{% static 'movies/chennai1.png' %}" alt="Chennai">
                 </div>
-                <button class="image-select-btn" onclick="selectCityPopup('Chennai')">Chennai</button>
+                <button class="image-select-btn" onclick="goCity('chennai')">Chennai</button>
             </div>
 
             <div class="image-card">
                 <div class="image-box">
                     <img src="{% static 'movies/dindigul1.png' %}" alt="Dindigul">
                 </div>
-                <button class="image-select-btn" onclick="selectCityPopup('Dindigul')">Dindigul</button>
+                <button class="image-select-btn" onclick="goCity('dindigul')">Dindigul</button>
             </div>
 
             <div class="image-card">
                 <div class="image-box">
                     <img src="{% static 'movies/madurai5.png' %}" alt="Madurai">
                 </div>
-                <button class="image-select-btn" onclick="selectCityPopup('Madurai')">Madurai</button>
+                <button class="image-select-btn" onclick="goCity('madurai')">Madurai</button>
             </div>
 
             <div class="image-card">
                 <div class="image-box">
                     <img src="{% static 'movies/covai1.png' %}" alt="Coimbatore">
                 </div>
-                <button class="image-select-btn" onclick="selectCityPopup('Coimbatore')">Coimbatore</button>
+                <button class="image-select-btn" onclick="goCity('coimbatore')">Coimbatore</button>
             </div>
 
             <div class="image-card">
                 <div class="image-box">
                     <img src="{% static 'movies/thiruchi.png' %}" alt="Tiruchi">
                 </div>
-                <button class="image-select-btn" onclick="selectCityPopup('Tiruchi')">Tiruchi</button>
+                <button class="image-select-btn" onclick="goCity('tiruchi')">Tiruchi</button>
             </div>
-
         </div>
-
     </div>
 </div>
+
+<!-- JS -->
+<script src="{% static 'js/loader.js' %}"></script>
 <script>
-window.addEventListener("load", () => {
-    const loader = document.getElementById("page-loader");
-    if (loader) {
-        loader.style.opacity = "0";
-        loader.style.transition = "opacity 0.3s ease";
-        setTimeout(() => loader.remove(), 300);
+    function goCity(city) {
+        window.location.href = "/homepage/" + city + "/";
     }
-});
-</script>
-
-<script>
-function openCityPopup() {
-    const backdrop = document.getElementById("city-popup-backdrop");
-    backdrop.style.display = "flex";
-
-    // Fade-in effect (non-blocking)
-    requestAnimationFrame(() => {
-        backdrop.classList.add("show");
-    });
-
-    document.body.style.overflow = "hidden";
-}
-
-function closeCityPopup() {
-    const backdrop = document.getElementById("city-popup-backdrop");
-    backdrop.classList.remove("show");
-
-    setTimeout(() => {
-        backdrop.style.display = "none";
-    }, 250);
-
-    document.body.style.overflow = "";
-}
-
-function selectCityPopup(city) {
-    closeCityPopup();
-    window.location.href = "/homepage/" + city.toLowerCase() + "/";
-}
-
-// OPEN POPUP AFTER PAGE RENDERS (FASTER on MOBILE)
-window.addEventListener("load", () => {
-    setTimeout(openCityPopup, 100);
-});
 </script>
 
 </body>

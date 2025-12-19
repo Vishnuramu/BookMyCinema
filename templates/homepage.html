@@ -3,6 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="{% static 'css/loader.css' %}">
     <title>BookMyCinema</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
@@ -47,6 +48,7 @@
 </head>
 
 <body style="margin:0; padding:0; font-family: Arial, sans-serif;">
+    {% include "partials/loader.html" %}
 
     <!-- TOP NAVBAR ONLY -->
     <header style="
@@ -245,10 +247,7 @@
 
     <hr style="margin: 0; border: none; border-top: 1px solid #d0d0d0;">
 
-    <!-- MAIN CONTENT (empty for now, just to see header) -->
-    <main>
-        <!-- you can add movie list later -->
-    </main>
+    
 
     <!-- ONLY LOCATION ANIMATION JS -->
     <script>
@@ -306,6 +305,7 @@
     {% block content %}
     {% endblock %}
 </main>
+<script src="{% static 'js/loader.js' %}"></script>
 </body>
 </html>
 
